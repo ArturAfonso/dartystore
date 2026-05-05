@@ -1,3 +1,6 @@
+import 'package:backend/modules/auth/services/email_service.dart';
+import 'package:backend/modules/usuario/dtos/reset_senha_dto.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vaden/vaden.dart';
 import '../repositories/usuario_repository.dart';
 import '../dtos/usuario_dto.dart';
@@ -9,8 +12,10 @@ import 'senha_service.dart';
 class UsuarioService {
   final UsuarioRepository _repository;
   final SenhaService _senhaService;
+  
+  final EmailService _emailService;
 
-  UsuarioService(this._repository, this._senhaService);
+  UsuarioService(this._repository, this._senhaService, {required EmailService emailService}) : _emailService = emailService;
 
   Future<List<UsuarioDto>> listarTodos() => _repository.findAll();
 
@@ -44,5 +49,15 @@ class UsuarioService {
   Future<UsuarioDto> desativar(int id) async {
     await buscarPorId(id);
     return _repository.setAtivo(id, false);
+  }
+
+
+    Future<void> solicitarResetSenha(ResetSenhaDto dto) async {
+    final usuario = await _repository.findByEmail(dto.email);
+    if (usuario == null) return; // silencioso por segurança
+
+    final token = Uuid().v4();
+    await _repository.salvarResetToken(usuario.id, token);
+    await _emailService.enviarResetSenha(dto.email, token);
   }
 }
