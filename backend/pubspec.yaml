@@ -10,9 +10,9 @@ environment:
 dependencies:
   vaden: ^1.0.2
   postgres: ^3.3.2
-  dart_jsonwebtoken: ^2.0.0
+  dart_jsonwebtoken: ^3.4.1
   dotenv: ^4.2.0
-  mailer: ^6.0.0 # para envio de email
+  mailer: ^7.1.0 # para envio de email
   uuid: ^4.3.3
   bcrypt: ^1.1.3
 
